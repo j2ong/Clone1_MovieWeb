@@ -1,55 +1,59 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import axios from 'axios';
+import Movie from './movie';
+//영화 데이터를 로딩하기위해 fetch 대신 axios를 사용함
 
-function Food({ name, picture, rating }) {
-  return (
-    <div>
-      <h2>i like {name}</h2>
-      <h4>{rating}/5.0</h4>
-      <img src={picture} />
-    </div>
-  );
-}
-//props는 쉽게말해 매개변수
-
-const foodlike = [
-  {
-    id: 1,
-    name: "kimch",
-    image:
-      "https://img.wemep.co.kr/deal/7/717/4017177/ba09fc3cc86142f2ed6b55f23f983a7450669260.jpg",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "budae",
-    image:
-      "https://recipe1.ezmember.co.kr/cache/recipe/2018/04/24/002c46b34a8814b7d9848fc949eb9e1b1.jpg",
-    rating: 4.9,
-  },
-];
-
-function App() {
-  return (
-    <div>
-      {foodlike.map((dish) => (
-        <Food
-          key={dish.id}
-          name={dish.name}
-          picture={dish.image}
-          rating={dish.rating}
-        />
-      ))}
-    </div>
-  );
-}
-
-Food.propTypes = {
-  name: PropTypes.string.isRequired,
-  picture: PropTypes.string.isRequired,
-  rating: PropTypes.number,
+class App extends React.Component {
+// React.Component를 상속한다.
+state = {
+  isLoading:true,
+  movie:[],
 };
+getMovies = async ()=>{
+  const {
+    data:{
+      data:{movies},
+    },
+  }  = await axios.get('https://yts-proxy.now.sh/list_movies.json?sort_by=rating');
+  this.setState({movies, isLoading:false}); 
+  //state의 movies와 axios.get()의 movie 변수 이름이 같아서 하나의 movies로 축약가능 (원래는 moview:moview)
+  
+};
+//axios.get이 반환한 결과를 movie에 저장한다. 
+//async = getMovies()함수는 비동기라서 기다려야해
+//await = getMovies()함수 내부의 axios.get()의 실행 완료를 기다렷다가 끝나면 진행해줘
 
-//propTypes은 매개변수의 타입을 명시해놓는 것
+componentDidMount(){
+  this.getMovies();
+}
+  
+  render(){                             //클래스형 컴포넌트에서 JSX를 반환하기 위해서는 render() 함수를 사용
+      const { isLoading, movies} = this.state;
+      return (
+      <div>
+        {isLoading 
+        ? 'Loading...' 
+        : movies.map((movie) => {
+          console.log(movie);
+          return (
+          <Movie
+            key ={movie.id}
+            year={movie.year}
+            title={movie.title}
+            summary={movie.summary}
+            poster={movie.medium_cover_image}
+          />
+          );
+        })}
+      </div>
+      );
+}
+}
+
+  
+
+
+//함수형 컴포넌트는 return문이 JSX를 반환
+//클래스형 컴포넌트는 render()함수가 JSX를 반환 -> 리액트는 클래스형 컴포넌트의 render()함수를 자동으로 실행
 
 export default App;
