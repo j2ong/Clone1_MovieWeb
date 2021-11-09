@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Movie from './movie';
+import './App.css';
 //영화 데이터를 로딩하기위해 fetch 대신 axios를 사용함
 
 class App extends React.Component {
@@ -52,7 +53,6 @@ componentDidMount(){
       );
 }
 }
-
   
 
 
