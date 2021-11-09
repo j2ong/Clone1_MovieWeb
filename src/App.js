@@ -7,7 +7,7 @@ class App extends React.Component {
 // React.Component를 상속한다.
 state = {
   isLoading:true,
-  movie:[],
+  movies:[],
 };
 getMovies = async ()=>{
   const {
@@ -15,7 +15,7 @@ getMovies = async ()=>{
       data:{movies},
     },
   }  = await axios.get('https://yts-proxy.now.sh/list_movies.json?sort_by=rating');
-  this.setState({movies, isLoading:false}); 
+  this.setState({movies, isLoading: false}); 
   //state의 movies와 axios.get()의 movie 변수 이름이 같아서 하나의 movies로 축약가능 (원래는 moview:moview)
   
 };
@@ -30,12 +30,14 @@ componentDidMount(){
   render(){                             //클래스형 컴포넌트에서 JSX를 반환하기 위해서는 render() 함수를 사용
       const { isLoading, movies} = this.state;
       return (
-      <div>
-        {isLoading 
-        ? 'Loading...' 
-        : movies.map((movie) => {
-          console.log(movie);
-          return (
+      <section className="container">
+        {isLoading ? ( //삼항연산, 로딩중이면 "loading", 아니면 영화정보 map함수이용 띄우기
+          <div className="loader">
+          <span className="loader__text">Loading...</span>
+        </div>
+      ) : (  
+      <div className="movies">
+        {movies.map(movie =>(
           <Movie
             key ={movie.id}
             year={movie.year}
@@ -43,9 +45,10 @@ componentDidMount(){
             summary={movie.summary}
             poster={movie.medium_cover_image}
           />
-          );
-        })}
+        ))}
       </div>
+      )}
+    </section>
       );
 }
 }
