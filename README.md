@@ -1,3 +1,3 @@
-# Movie App
+# Movie
 
-React Js Fundamentals Course 2021
+Ctrl + C -> Ctrl + v
